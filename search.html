@@ -1,0 +1,153 @@
+<!-- search.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Memes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        input[type="text"], select {
+            padding: 10px;
+            margin: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #007B9A;
+        }
+
+        #search-results {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .meme-card {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 300px;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Search Memes</h1>
+        <input type="text" id="search-input" placeholder="Search for memes..." />
+        <button id="search-button">Search</button>
+        <select id="category-select">
+            <option value="">Select Category</option>
+            <option value="funny">Funny</option>
+            <option value="sad">Sad</option>
+            <option value="memes">Memes</option>
+            <option value="animals">Animals</option>
+            <!-- Add more categories here -->
+        </select>
+    </header>
+    <main>
+        <div id="search-results"></div>
+        <div id="loading" class="loading">Loading...</div>
+        <button id="load-more-button" style="display: none;">Load More</button>
+    </main>
+    <script>
+        let memes = [];
+        let loading = false;
+
+        async function fetchMemes(query = '', append = false) {
+            if (loading) return;
+            loading = true;
+            document.getElementById('loading').classList.add('visible');
+
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const categoryParam = urlParams.get('category');
+                const response = await fetch(`/.netlify/functions/memer?searchTerm=${encodeURIComponent(query)}&category=${encodeURIComponent(categoryParam)}`);
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    const fetchedMemes = data.map(meme => ({
+                        url: meme.url || meme.link,
+                        title: meme.name || 'No title',
+                        description: meme.about || 'No description available.',
+                    }));
+
+                    if (append) {
+                        memes = [...new Set([...memes, ...fetchedMemes])]; // Prevent duplicates
+                    } else {
+                        memes = fetchedMemes;
+                    }
+
+                    displayMemes(memes);
+                } else {
+                    throw new Error('Invalid response from the server');
+                }
+            } catch (error) {
+                console.error('Error fetching memes:', error);
+                document.getElementById('search-results').innerHTML = `<p>Failed to fetch memes.</p>`;
+            } finally {
+                loading = false;
+                document.getElementById('loading').classList.remove('visible');
+                document.getElementById('load-more-button').style.display = memes.length > 0 ? 'block' : 'none';
+            }
+        }
+
+        function displayMemes(memes) {
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '';
+            memes.forEach(meme => {
+                const memeCard = document.createElement('div');
+                memeCard.className = 'meme-card';
+                memeCard.innerHTML = `
+                    <img src="${meme.url}" alt="${meme.title}" style="width:100%; border-radius:8px;">
+                    <h3>${meme.title}</h3>
+                    <p>${meme.description}</p>
+                `;
+                resultsContainer.appendChild(memeCard);
+            });
+        }
+
+        document.getElementById('search-button').onclick = () => {
+            const query = document.getElementById('search-input').value;
+            fetchMemes(query);
+        };
+
+        document.getElementById('load-more-button').onclick = () => {
+            const query = document.getElementById('search-input').value;
+            fetchMemes(query, true);
+        };
+    </script>
+</body>
+</html>
