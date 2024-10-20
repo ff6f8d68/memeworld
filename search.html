@@ -1,152 +1,292 @@
-<!-- search.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Memes</title>
+    <title>Meme World - Search Memes</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
-            color: #333;
+            padding: 20px;
+            background-color: #f0f0f0;
         }
-
-        header {
-            background: #4CAF50;
-            color: white;
-            padding: 1rem;
+        h1 {
             text-align: center;
+            margin-bottom: 20px;
         }
-
-        input[type="text"], select {
+        #search-section, #category-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #search-section input {
             padding: 10px;
-            margin: 10px;
+            width: 300px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
         }
-
-        button {
-            padding: 10px 15px;
-            background-color: #008CBA;
+        #search-section button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
             color: white;
             border: none;
+            border-radius: 5px;
+            margin-left: 10px;
             cursor: pointer;
         }
-
-        button:hover {
-            background-color: #007B9A;
+        #search-section button:hover {
+            background-color: #218838;
         }
-
-        #search-results {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        #category-section select {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            width: 200px;
         }
-
-        .meme-card {
-            background: white;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        #category-section button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        #category-section button:hover {
+            background-color: #0056b3;
+        }
+        .meme-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .meme-item {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 300px;
         }
-
-        .loading {
+        .meme-item img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .meme-item h3 {
+            margin: 10px 0 5px;
+        }
+        .meme-item p {
+            color: #555;
+        }
+        #search-results {
+            margin-top: 20px;
+        }
+        #load-more {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #load-more:hover {
+            background-color: #0056b3;
+        }
+        /* Loading spinner */
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Progress bar */
+        #progress-container {
+            width: 100%;
+            background-color: #f0f0f0;
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
             display: none;
         }
-
-        .loading.visible {
-            display: block;
+        #progress-bar {
+            width: 0%;
+            height: 10px;
+            background-color: #3498db;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Search Memes</h1>
+
+    <h1>Welcome to Meme World</h1>
+
+    <!-- Search Section -->
+    <div id="search-section">
         <input type="text" id="search-input" placeholder="Search for memes..." />
-        <button id="search-button">Search</button>
+        <button onclick="searchMemes()">Search</button>
+    </div>
+
+    <!-- Category Section -->
+    <div id="category-section">
         <select id="category-select">
             <option value="">Select Category</option>
-            <option value="funny">Funny</option>
-            <option value="sad">Sad</option>
-            <option value="memes">Memes</option>
-            <option value="animals">Animals</option>
-            <!-- Add more categories here -->
+            <option value="wholesomememes">Wholesome Memes</option>
+            <option value="dankmemes">Dank Memes</option>
+            <option value="memes">General Memes</option>
+            <option value="animemes">Anime Memes</option>
+            <option value="funny">Funny Memes</option>
+            <option value="mildlyinteresting">Mildly Interesting</option>
+            <option value="aww">Cute/Aww</option>
         </select>
-    </header>
-    <main>
-        <div id="search-results"></div>
-        <div id="loading" class="loading">Loading...</div>
-        <button id="load-more-button" style="display: none;">Load More</button>
-    </main>
+        <button onclick="filterByCategory()">Filter by Category</button>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Loading memes...</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <!-- Meme Search Results -->
+    <div id="search-results" class="meme-container"></div>
+
+    <!-- Load More Button -->
+    <button id="load-more" onclick="loadMoreMemes()">Load More</button>
+
     <script>
         let memes = [];
+        let displayedMemes = [];
+        let offset = 0;
+        const memesPerPage = 10;
+        let currentCategory = '';
+        let searchQuery = '';
         let loading = false;
 
-        async function fetchMemes(query = '', append = false) {
+        // Show loading spinner
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('load-more').style.display = 'none';
+        }
+
+        // Hide loading spinner
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('progress-container').style.display = 'none';
+            document.getElementById('load-more').style.display = 'block';
+        }
+
+        // Update progress bar
+        function updateProgress(percent) {
+            document.getElementById('progress-bar').style.width = percent + '%';
+        }
+
+        // Fetch memes from API
+        async function fetchMemes(query = '', category = '', append = false) {
             if (loading) return;
             loading = true;
-            document.getElementById('loading').classList.add('visible');
-
+            showLoading();
             try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const categoryParam = urlParams.get('category');
-                const response = await fetch(`/.netlify/functions/memer?searchTerm=${encodeURIComponent(query)}&category=${encodeURIComponent(categoryParam)}`);
-                const data = await response.json();
+                let fetchedMemes = [];
+                let progressStep = 0;
 
-                if (Array.isArray(data)) {
-                    const fetchedMemes = data.map(meme => ({
-                        url: meme.url || meme.link,
-                        title: meme.name || 'No title',
-                        description: meme.about || 'No description available.',
-                    }));
+                while (fetchedMemes.length < memesPerPage) {
+                    let url = `https://meme-api.com/gimme/${category || 'memes'}/1`;
+                    const response = await fetch(url);
+                    const data = await response.json();
 
-                    if (append) {
-                        memes = [...new Set([...memes, ...fetchedMemes])]; // Prevent duplicates
-                    } else {
-                        memes = fetchedMemes;
+                    let meme = data.memes ? data.memes[0] : data;
+                    
+                    // Check if meme is already displayed
+                    if (!displayedMemes.some(dMeme => dMeme.url === meme.url)) {
+                        fetchedMemes.push(meme);
                     }
 
-                    displayMemes(memes);
-                } else {
-                    throw new Error('Invalid response from the server');
+                    // Update progress
+                    progressStep += 10; // Progress in percentage
+                    updateProgress(progressStep);
                 }
+
+                // Append or replace memes
+                if (append) {
+                    memes = memes.concat(fetchedMemes);
+                } else {
+                    memes = fetchedMemes;
+                }
+
+                // Display memes
+                displayedMemes = displayedMemes.concat(memes);
+                displayMemes(memes);
             } catch (error) {
                 console.error('Error fetching memes:', error);
-                document.getElementById('search-results').innerHTML = `<p>Failed to fetch memes.</p>`;
             } finally {
+                hideLoading();
                 loading = false;
-                document.getElementById('loading').classList.remove('visible');
-                document.getElementById('load-more-button').style.display = memes.length > 0 ? 'block' : 'none';
             }
         }
 
+        // Display memes in the container
         function displayMemes(memes) {
-            const resultsContainer = document.getElementById('search-results');
-            resultsContainer.innerHTML = '';
+            const container = document.getElementById('search-results');
+            container.innerHTML = '';
             memes.forEach(meme => {
-                const memeCard = document.createElement('div');
-                memeCard.className = 'meme-card';
-                memeCard.innerHTML = `
-                    <img src="${meme.url}" alt="${meme.title}" style="width:100%; border-radius:8px;">
+                const memeItem = document.createElement('div');
+                memeItem.className = 'meme-item';
+                memeItem.innerHTML = `
+                    <img src="${meme.url}" alt="${meme.title}" />
                     <h3>${meme.title}</h3>
-                    <p>${meme.description}</p>
+                    <p>👍 ${meme.ups} Upvotes</p>
                 `;
-                resultsContainer.appendChild(memeCard);
+                container.appendChild(memeItem);
             });
         }
 
-        document.getElementById('search-button').onclick = () => {
-            const query = document.getElementById('search-input').value;
-            fetchMemes(query);
-        };
+        // Load more memes
+        function loadMoreMemes() {
+            offset += memesPerPage;
+            fetchMemes(currentCategory, searchQuery, true);
+        }
 
-        document.getElementById('load-more-button').onclick = () => {
-            const query = document.getElementById('search-input').value;
-            fetchMemes(query, true);
+        // Search memes based on input
+        function searchMemes() {
+            searchQuery = document.getElementById('search-input').value;
+            fetchMemes(searchQuery);
+        }
+
+        // Filter memes by category
+        function filterByCategory() {
+            currentCategory = document.getElementById('category-select').value;
+            fetchMemes('', currentCategory);
+        }
+
+        // Initial fetch of memes
+        window.onload = function () {
+            fetchMemes();
         };
     </script>
 </body>
