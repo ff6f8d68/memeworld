@@ -1,81 +1,79 @@
-<!-- categories.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Categories</title>
+    <title>Meme World - Browse Categories</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
-            color: #333;
+            padding: 20px;
+            background-color: #f0f0f0;
         }
-
-        header {
-            background: #4CAF50;
-            color: white;
-            padding: 1rem;
+        h1 {
             text-align: center;
+            margin-bottom: 20px;
         }
-
         .category {
-            display: inline-block;
-            border-radius: 50%;
-            margin: 10px;
-            background-color: #4CAF50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .category a {
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            background-color: #007bff;
             color: white;
-            text-align: center;
-            line-height: 50px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            width: 50px;
-            height: 50px;
-            font-size: 14px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
         }
-
-        .category:hover {
-            transform: scale(1.1);
-        }
-
-        #categories-container {
-            text-align: center;
-            margin-top: 20px;
+        .category a:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Browse Categories</h1>
-    </header>
-    <main id="categories-container">
-        <!-- Categories will be populated here -->
-    </main>
-    <script>
-        const categoriesContainer = document.getElementById('categories-container');
 
-        const categories = [
-            { name: 'Funny', clicks: 10 },
-            { name: 'Sad', clicks: 5 },
-            { name: 'Memes', clicks: 8 },
-            { name: 'Animals', clicks: 12 },
-            // Add more categories as needed
-        ];
+    <h1>Browse Meme Categories</h1>
 
-        categories.forEach(category => {
-            const categoryElement = document.createElement('div');
-            categoryElement.className = 'category';
-            const size = category.clicks * 2; // Adjust size based on clicks
-            categoryElement.style.width = `${size}px`;
-            categoryElement.style.height = `${size}px`;
-            categoryElement.innerText = category.name;
-            categoryElement.onclick = () => {
-                window.location.href = `search.html?category=${category.name}`;
-            };
-            categoriesContainer.appendChild(categoryElement);
-        });
-    </script>
+    <div class="category">
+        <h2>Wholesome Memes</h2>
+        <a href="search.html?category=wholesomememes">View Memes</a>
+    </div>
+
+    <div class="category">
+        <h2>Dank Memes</h2>
+        <a href="search.html?category=dankmemes">View Memes</a>
+    </div>
+
+    <div class="category">
+        <h2>General Memes</h2>
+        <a href="search.html?category=memes">View Memes</a>
+    </div>
+
+    <div class="category">
+        <h2>Anime Memes</h2>
+        <a href="search.html?category=animemes">View Memes</a>
+    </div>
+
+    <div class="category">
+        <h2>Funny Memes</h2>
+        <a href="search.html?category=funny">View Memes</a>
+    </div>
+
+    <div class="category">
+        <h2>Mildly Interesting</h2>
+        <a href="search.html?category=mildlyinteresting">View Memes</a>
+    </div>
+
+    <div class="category">
+        <h2>Cute/Aww</h2>
+        <a href="search.html?category=aww">View Memes</a>
+    </div>
+
 </body>
 </html>
