@@ -1,67 +1,40 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meme World</title>
+    <title>Meme World - Welcome</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
-            color: #333;
+            padding: 20px;
+            background-color: #f0f0f0;
         }
-
-        header {
-            background: #4CAF50;
-            color: white;
-            padding: 1rem;
+        h1 {
             text-align: center;
+            margin-bottom: 20px;
         }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        nav ul li {
-            display: inline;
-            margin: 0 15px;
-        }
-
-        button {
-            padding: 10px 15px;
-            background-color: #008CBA;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #007B9A;
-        }
-
-        main {
+        .link {
+            display: block;
             text-align: center;
-            margin: 20px;
+            padding: 15px;
+            margin: 10px auto;
+            width: 200px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .link:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to Meme World!</h1>
-        <nav>
-            <ul>
-                <li><a href="search.html" style="color: white;">Search Memes</a></li>
-                <li><a href="categories.html" style="color: white;">Browse Categories</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <h2>Get Started!</h2>
-        <p>Select an option above to explore memes!</p>
-    </main>
+    <h1>Welcome to Meme World</h1>
+    <a class="link" href="search.html">Search Memes</a>
+    <a class="link" href="categories.html">Browse Categories</a>
 </body>
 </html>
