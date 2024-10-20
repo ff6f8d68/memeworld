@@ -1,0 +1,81 @@
+<!-- categories.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Categories</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .category {
+            display: inline-block;
+            border-radius: 50%;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 50px;
+            height: 50px;
+            font-size: 14px;
+        }
+
+        .category:hover {
+            transform: scale(1.1);
+        }
+
+        #categories-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Browse Categories</h1>
+    </header>
+    <main id="categories-container">
+        <!-- Categories will be populated here -->
+    </main>
+    <script>
+        const categoriesContainer = document.getElementById('categories-container');
+
+        const categories = [
+            { name: 'Funny', clicks: 10 },
+            { name: 'Sad', clicks: 5 },
+            { name: 'Memes', clicks: 8 },
+            { name: 'Animals', clicks: 12 },
+            // Add more categories as needed
+        ];
+
+        categories.forEach(category => {
+            const categoryElement = document.createElement('div');
+            categoryElement.className = 'category';
+            const size = category.clicks * 2; // Adjust size based on clicks
+            categoryElement.style.width = `${size}px`;
+            categoryElement.style.height = `${size}px`;
+            categoryElement.innerText = category.name;
+            categoryElement.onclick = () => {
+                window.location.href = `search.html?category=${category.name}`;
+            };
+            categoriesContainer.appendChild(categoryElement);
+        });
+    </script>
+</body>
+</html>
