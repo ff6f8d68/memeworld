@@ -6,13 +6,7 @@ exports.handler = async (event) => {
 
     try {
         let memes;
-        if (searchTerm) {
-            memes = await nodeyourmeme.search(searchTerm);
-        } else if (category) {
-            memes = await nodeyourmeme.search(category); // Adjust according to your API if needed
-        } else {
-            memes = await nodeyourmeme.random();
-        }
+        memes = await nodeyourmeme.random()
 
         return {
             statusCode: 200,
