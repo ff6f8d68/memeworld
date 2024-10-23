@@ -66,6 +66,7 @@
             gap: 20px;
         }
         .meme-item {
+            position: relative;
             background-color: #fff;
             border-radius: 10px;
             padding: 10px;
@@ -81,6 +82,17 @@
         }
         .meme-item p {
             color: #555;
+        }
+        /* NSFW Indicator */
+        .nsfw-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: orange;
+            color: white;
+            font-size: 12px;
+            border-radius: 5px;
         }
         #search-results {
             margin-top: 20px;
@@ -183,7 +195,6 @@
         let offset = 0;
         const memesPerPage = 10;
         let currentCategory = '';
-        let searchQuery = '';
         let loading = false;
 
         // Show loading spinner
@@ -206,7 +217,7 @@
             document.getElementById('progress-bar').style.width = percent + '%';
         }
 
-        // Fetch memes from API
+        // Fetch memes from API with NSFW handling
         async function fetchMemes(query = '', category = '', append = false) {
             if (loading) return;
             loading = true;
@@ -216,19 +227,22 @@
                 let progressStep = 0;
 
                 while (fetchedMemes.length < memesPerPage) {
-                    let url = `https://meme-api.com/gimme/${category || 'memes'}/1`;
+                    let url = `https://meme-api.com/gimme/${query || category || 'memes'}/1`;
                     const response = await fetch(url);
                     const data = await response.json();
 
                     let meme = data.memes ? data.memes[0] : data;
-                    
+
+                    // NSFW handling
+                    if (meme.nsfw && !canViewNSFW()) continue;
+
                     // Check if meme is already displayed
                     if (!displayedMemes.some(dMeme => dMeme.url === meme.url)) {
                         fetchedMemes.push(meme);
                     }
 
                     // Update progress
-                    progressStep += 10; // Progress in percentage
+                    progressStep += 10;
                     updateProgress(progressStep);
                 }
 
@@ -250,7 +264,7 @@
             }
         }
 
-        // Display memes in the container
+        // Display memes in the container with NSFW indicator
         function displayMemes(memes) {
             const container = document.getElementById('search-results');
             container.innerHTML = '';
@@ -259,35 +273,30 @@
                 memeItem.className = 'meme-item';
                 memeItem.innerHTML = `
                     <img src="${meme.url}" alt="${meme.title}" />
-                    <h3>${meme.title}</h3>
-                    <p>👍 ${meme.ups} Upvotes</p>
-                `;
-                container.appendChild(memeItem);
-            });
-        }
+                    <h3>${meme.title}</h3> <p>Subreddit: ${meme.subreddit}</p> `;
+if (meme.nsfw) { const nsfwIndicator = document.createElement('div'); nsfwIndicator.className = 'nsfw-indicator'; nsfwIndicator.textContent = 'NSFW'; memeItem.appendChild(nsfwIndicator); } container.appendChild(memeItem); }); }
+    // Search memes by keyword
+    function searchMemes() {
+        const query = document.getElementById('search-input').value;
+        fetchMemes(query, '', false);
+    }
 
-        // Load more memes
-        function loadMoreMemes() {
-            offset += memesPerPage;
-            fetchMemes(currentCategory, searchQuery, true);
-        }
+    // Filter memes by category
+    function filterByCategory() {
+        const category = document.getElementById('category-select').value;
+        currentCategory = category;
+        fetchMemes('', category, false);
+    }
 
-        // Search memes based on input
-        function searchMemes() {
-            searchQuery = document.getElementById('search-input').value;
-            fetchMemes(searchQuery);
-        }
+    // Load more memes
+    function loadMoreMemes() {
+        fetchMemes(currentCategory || '', '', true);
+    }
 
-        // Filter memes by category
-        function filterByCategory() {
-            currentCategory = document.getElementById('category-select').value;
-            fetchMemes('', currentCategory);
-        }
+    // Check if user can view NSFW content
+    function canViewNSFW() {
+        const age = prompt("Please enter your age:");
+        return age >= 18;
+    }
+</script>
 
-        // Initial fetch of memes
-        window.onload = function () {
-            fetchMemes();
-        };
-    </script>
-</body>
-</html>
